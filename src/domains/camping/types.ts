@@ -89,3 +89,27 @@ export const PROVINCES = [
 ] as const;
 
 export type Province = (typeof PROVINCES)[number];
+
+export type AmenityKey = keyof Amenities;
+
+export const AMENITY_LABELS: Record<AmenityKey, string> = {
+  water: "Agua",
+  electricity: "Electricidad",
+  bathrooms: "Baños",
+  showers: "Duchas",
+  hot_water: "Agua caliente",
+  wifi: "WiFi",
+  store: "Proveeduría",
+  grill: "Parrillas",
+  pool: "Pileta",
+  pets_allowed: "Mascotas",
+  parking: "Estacionamiento",
+  restaurant: "Restaurante",
+};
+
+export const CAMPING_TYPE_LABELS: Record<CampingType, string> = {
+  municipal: "Municipal",
+  nacional: "Nacional",
+  privado: "Privado",
+  libre: "Libre",
+};

@@ -29,6 +29,7 @@ export default function TabLayout() {
         name="discover"
         options={{
           title: "Explorar",
+          headerShown: false,
         }}
       />
       <Tabs.Screen
