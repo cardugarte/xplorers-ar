@@ -17,7 +17,7 @@ CREATE TABLE campings (
   prices JSONB,
   contact JSONB,
   photos TEXT[] DEFAULT '{}',
-  source TEXT NOT NULL CHECK (source IN ('sinta', 'scraped', 'community')),
+  source TEXT NOT NULL CHECK (source IN ('sinta', 'scraped', 'community', 'osm')),
   verified BOOLEAN DEFAULT false,
   owner_npub TEXT,
   owner_lightning_address TEXT,
