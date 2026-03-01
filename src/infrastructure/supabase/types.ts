@@ -85,6 +85,9 @@ export type Database = {
           provinces?: string[];
           types?: string[];
           required_amenities?: string[];
+          sort_by?: string;
+          user_lat?: number;
+          user_lng?: number;
           lim?: number;
           off_set?: number;
         };
@@ -93,6 +96,7 @@ export type Database = {
             latitude: number;
             longitude: number;
             similarity: number;
+            distance_km: number | null;
           }
         >;
       };
