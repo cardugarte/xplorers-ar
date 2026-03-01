@@ -1,8 +1,11 @@
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
+import { useShallow } from "zustand/react/shallow";
 
 import { supabase } from "@/src/infrastructure/supabase/client";
+import { useDebouncedValue } from "@/src/shared/hooks/useDebouncedValue";
 import type { ViewportBounds } from "@/src/domains/map/types";
 
+import { useFilterStore } from "./store";
 import type { Camping } from "./types";
 
 export function useCampingsNear(lat: number, lng: number, radiusKm = 50) {
@@ -65,6 +68,48 @@ export function useCamping(id: string) {
       return data;
     },
     enabled: !!id,
+  });
+}
+
+export function useSearchCampings() {
+  const { searchQuery, provinces, types, requiredAmenities } = useFilterStore(
+    useShallow((s) => ({
+      searchQuery: s.searchQuery,
+      provinces: s.provinces,
+      types: s.types,
+      requiredAmenities: s.requiredAmenities,
+    })),
+  );
+
+  const debouncedQuery = useDebouncedValue(searchQuery);
+
+  return useQuery({
+    queryKey: [
+      "campings",
+      "search",
+      debouncedQuery,
+      provinces,
+      types,
+      requiredAmenities,
+    ],
+    queryFn: async () => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const { data, error } = await (supabase.rpc as any)(
+        "search_and_filter_campings",
+        {
+          query: debouncedQuery,
+          provinces,
+          types,
+          required_amenities: requiredAmenities,
+          lim: 50,
+          off_set: 0,
+        },
+      );
+
+      if (error) throw error;
+      return data as unknown as Camping[];
+    },
+    placeholderData: keepPreviousData,
   });
 }
 

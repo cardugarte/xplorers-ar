@@ -79,6 +79,23 @@ export type Database = {
           }
         >;
       };
+      search_and_filter_campings: {
+        Args: {
+          query?: string;
+          provinces?: string[];
+          types?: string[];
+          required_amenities?: string[];
+          lim?: number;
+          off_set?: number;
+        };
+        Returns: Array<
+          Omit<Database["public"]["Tables"]["campings"]["Row"], "location"> & {
+            latitude: number;
+            longitude: number;
+            similarity: number;
+          }
+        >;
+      };
     };
   };
 };
