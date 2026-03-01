@@ -50,6 +50,35 @@ export type Database = {
         };
         Update: Partial<Database["public"]["Tables"]["campings"]["Insert"]>;
       };
+      error_reports: {
+        Row: {
+          id: string;
+          camping_id: string;
+          reporter_id: string | null;
+          description: string;
+          type:
+            | "wrong_location"
+            | "closed"
+            | "wrong_info"
+            | "duplicate"
+            | "other";
+          status: "pending" | "reviewed" | "fixed" | "dismissed";
+          created_at: string;
+        };
+        Insert: {
+          camping_id: string;
+          description: string;
+          type:
+            | "wrong_location"
+            | "closed"
+            | "wrong_info"
+            | "duplicate"
+            | "other";
+        };
+        Update: Partial<
+          Database["public"]["Tables"]["error_reports"]["Insert"]
+        >;
+      };
     };
     Functions: {
       get_campings_near: {
