@@ -1,0 +1,3 @@
+# Scraper output — large JSON files, not committed
+*.json
+!.gitignore
