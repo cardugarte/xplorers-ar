@@ -1,4 +1,8 @@
-import { keepPreviousData, useQuery } from "@tanstack/react-query";
+import {
+  keepPreviousData,
+  useInfiniteQuery,
+  useQuery,
+} from "@tanstack/react-query";
 import { useShallow } from "zustand/react/shallow";
 
 import { supabase } from "@/src/infrastructure/supabase/client";
@@ -7,6 +11,10 @@ import type { ViewportBounds } from "@/src/domains/map/types";
 
 import { useFilterStore } from "./store";
 import type { Camping } from "./types";
+
+export type CampingWithDistance = Camping & { distance_km: number | null };
+
+const PAGE_SIZE = 20;
 
 export function useCampingsNear(lat: number, lng: number, radiusKm = 50) {
   return useQuery({
@@ -72,18 +80,21 @@ export function useCamping(id: string) {
 }
 
 export function useSearchCampings() {
-  const { searchQuery, provinces, types, requiredAmenities } = useFilterStore(
-    useShallow((s) => ({
-      searchQuery: s.searchQuery,
-      provinces: s.provinces,
-      types: s.types,
-      requiredAmenities: s.requiredAmenities,
-    })),
-  );
+  const { searchQuery, provinces, types, requiredAmenities, sortBy, userCoords } =
+    useFilterStore(
+      useShallow((s) => ({
+        searchQuery: s.searchQuery,
+        provinces: s.provinces,
+        types: s.types,
+        requiredAmenities: s.requiredAmenities,
+        sortBy: s.sortBy,
+        userCoords: s.userCoords,
+      })),
+    );
 
   const debouncedQuery = useDebouncedValue(searchQuery);
 
-  return useQuery({
+  return useInfiniteQuery({
     queryKey: [
       "campings",
       "search",
@@ -91,8 +102,10 @@ export function useSearchCampings() {
       provinces,
       types,
       requiredAmenities,
+      sortBy,
+      userCoords,
     ],
-    queryFn: async () => {
+    queryFn: async ({ pageParam = 0 }) => {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const { data, error } = await (supabase.rpc as any)(
         "search_and_filter_campings",
@@ -101,13 +114,21 @@ export function useSearchCampings() {
           provinces,
           types,
           required_amenities: requiredAmenities,
-          lim: 50,
-          off_set: 0,
+          sort_by: sortBy,
+          user_lat: userCoords?.lat ?? null,
+          user_lng: userCoords?.lng ?? null,
+          lim: PAGE_SIZE,
+          off_set: pageParam,
         },
       );
 
       if (error) throw error;
-      return data as unknown as Camping[];
+      return data as unknown as CampingWithDistance[];
+    },
+    initialPageParam: 0,
+    getNextPageParam: (lastPage, allPages) => {
+      if (lastPage.length < PAGE_SIZE) return undefined;
+      return allPages.reduce((total, page) => total + page.length, 0);
     },
     placeholderData: keepPreviousData,
   });

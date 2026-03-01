@@ -5,13 +5,19 @@ import { Pressable, Text, useColorScheme, View } from "react-native";
 import { GlassView } from "@/src/shared/components/GlassView";
 import { glassText } from "@/src/shared/theme/tokens";
 
+import type { CampingWithDistance } from "../hooks";
 import { AMENITY_LABELS, CAMPING_TYPE_LABELS } from "../types";
-import type { AmenityKey, Camping } from "../types";
+import type { AmenityKey } from "../types";
 
 const MAX_AMENITY_CHIPS = 4;
 
+function formatDistance(km: number): string {
+  if (km < 1) return `${Math.round(km * 1000)} m`;
+  return `${km.toFixed(1)} km`;
+}
+
 interface CampingCardProps {
-  camping: Camping;
+  camping: CampingWithDistance;
 }
 
 export function CampingCard({ camping }: CampingCardProps) {
@@ -61,6 +67,14 @@ export function CampingCard({ camping }: CampingCardProps) {
           >
             {camping.province}
           </Text>
+          {camping.distance_km != null && (
+            <Text
+              className="ml-1 font-label text-sm"
+              style={{ color: colors.glaciar }}
+            >
+              · {formatDistance(camping.distance_km)}
+            </Text>
+          )}
         </View>
 
         {/* Amenities preview */}

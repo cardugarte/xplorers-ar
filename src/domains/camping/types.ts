@@ -6,6 +6,9 @@ export type CampingSource = z.infer<typeof CampingSourceSchema>;
 export const CampingTypeSchema = z.enum(["municipal", "nacional", "privado", "libre"]);
 export type CampingType = z.infer<typeof CampingTypeSchema>;
 
+export const SortOptionSchema = z.enum(["name", "distance"]);
+export type SortOption = z.infer<typeof SortOptionSchema>;
+
 export const AmenitiesSchema = z.object({
   water: z.boolean().optional(),
   electricity: z.boolean().optional(),

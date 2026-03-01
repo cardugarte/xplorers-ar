@@ -14,10 +14,11 @@ import {
   FilterChips,
   FilterModal,
   SearchInput,
+  SortPicker,
 } from "@/src/domains/camping/components";
 import { useSearchCampings } from "@/src/domains/camping/hooks";
+import type { CampingWithDistance } from "@/src/domains/camping/hooks";
 import { useFilterStore } from "@/src/domains/camping/store";
-import type { Camping } from "@/src/domains/camping/types";
 import { glassText } from "@/src/shared/theme/tokens";
 
 export default function DiscoverScreen() {
@@ -26,7 +27,18 @@ export default function DiscoverScreen() {
   const insets = useSafeAreaInsets();
   const [filtersVisible, setFiltersVisible] = useState(false);
 
-  const { data: campings, isPending, isFetching, error } = useSearchCampings();
+  const {
+    data,
+    isPending,
+    isFetching,
+    isFetchingNextPage,
+    hasNextPage,
+    fetchNextPage,
+    refetch,
+    error,
+  } = useSearchCampings();
+
+  const campings = data?.pages.flat() ?? [];
 
   const hasActiveFilters = useFilterStore(
     (s) =>
@@ -35,6 +47,12 @@ export default function DiscoverScreen() {
       s.types.length > 0 ||
       s.requiredAmenities.length > 0,
   );
+
+  const handleEndReached = () => {
+    if (hasNextPage && !isFetchingNextPage) {
+      fetchNextPage();
+    }
+  };
 
   return (
     <View
@@ -53,6 +71,7 @@ export default function DiscoverScreen() {
 
       <SearchInput />
       <FilterChips onOpenFilters={() => setFiltersVisible(true)} />
+      <SortPicker />
 
       {/* Content */}
       {isPending ? (
@@ -68,7 +87,7 @@ export default function DiscoverScreen() {
             Error al cargar campings. Intentá de nuevo.
           </Text>
         </View>
-      ) : campings && campings.length === 0 ? (
+      ) : campings.length === 0 ? (
         <View className="flex-1 items-center justify-center px-8">
           <Search size={40} color={colors.secondary} />
           <Text
@@ -83,14 +102,18 @@ export default function DiscoverScreen() {
       ) : (
         <FlatList
           data={campings}
-          keyExtractor={(item: Camping) => item.id}
-          renderItem={({ item }: { item: Camping }) => (
+          keyExtractor={(item: CampingWithDistance) => item.id}
+          renderItem={({ item }: { item: CampingWithDistance }) => (
             <CampingCard camping={item} />
           )}
           contentContainerClassName="pt-2 pb-24"
           showsVerticalScrollIndicator={false}
+          onEndReached={handleEndReached}
+          onEndReachedThreshold={0.5}
+          refreshing={isFetching && !isFetchingNextPage}
+          onRefresh={refetch}
           ListFooterComponent={
-            isFetching ? (
+            isFetchingNextPage ? (
               <ActivityIndicator
                 size="small"
                 color={colors.brand}

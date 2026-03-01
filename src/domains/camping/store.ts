@@ -1,12 +1,14 @@
 import { create } from "zustand";
 
-import type { AmenityKey, CampingType, Province } from "./types";
+import type { AmenityKey, CampingType, Province, SortOption } from "./types";
 
 interface FilterState {
   searchQuery: string;
   provinces: Province[];
   types: CampingType[];
   requiredAmenities: AmenityKey[];
+  sortBy: SortOption;
+  userCoords: { lat: number; lng: number } | null;
 }
 
 interface FilterActions {
@@ -14,6 +16,8 @@ interface FilterActions {
   toggleProvince: (province: Province) => void;
   toggleType: (type: CampingType) => void;
   toggleAmenity: (amenity: AmenityKey) => void;
+  setSortBy: (sortBy: SortOption) => void;
+  setUserCoords: (coords: { lat: number; lng: number } | null) => void;
   clearFilters: () => void;
 }
 
@@ -22,6 +26,8 @@ const initialState: FilterState = {
   provinces: [],
   types: [],
   requiredAmenities: [],
+  sortBy: "name",
+  userCoords: null,
 };
 
 function toggle<T>(arr: T[], item: T): T[] {
@@ -36,5 +42,7 @@ export const useFilterStore = create<FilterState & FilterActions>((set) => ({
   toggleType: (type) => set((s) => ({ types: toggle(s.types, type) })),
   toggleAmenity: (amenity) =>
     set((s) => ({ requiredAmenities: toggle(s.requiredAmenities, amenity) })),
+  setSortBy: (sortBy) => set({ sortBy }),
+  setUserCoords: (userCoords) => set({ userCoords }),
   clearFilters: () => set(initialState),
 }));
