@@ -18,7 +18,8 @@ export type Database = {
             website?: string;
           } | null;
           photos: string[];
-          source: "sinta" | "scraped" | "community";
+          type: "municipal" | "nacional" | "privado" | "libre" | null;
+          source: "sinta" | "scraped" | "community" | "osm";
           verified: boolean;
           owner_npub: string | null;
           owner_lightning_address: string | null;
@@ -41,7 +42,8 @@ export type Database = {
             website?: string;
           } | null;
           photos?: string[];
-          source: "sinta" | "scraped" | "community";
+          type?: "municipal" | "nacional" | "privado" | "libre" | null;
+          source: "sinta" | "scraped" | "community" | "osm";
           verified?: boolean;
           owner_npub?: string | null;
           owner_lightning_address?: string | null;
@@ -70,7 +72,12 @@ export type Database = {
           max_lat: number;
           max_lng: number;
         };
-        Returns: Database["public"]["Tables"]["campings"]["Row"][];
+        Returns: Array<
+          Omit<Database["public"]["Tables"]["campings"]["Row"], "location"> & {
+            latitude: number;
+            longitude: number;
+          }
+        >;
       };
     };
   };

@@ -71,6 +71,28 @@ export const POPULAR_ZONES = [
   },
 ] as const;
 
+// ─── Viewport bounds for RPC queries ───
+
+export interface ViewportBounds {
+  minLat: number;
+  minLng: number;
+  maxLat: number;
+  maxLng: number;
+}
+
+/** Convert Mapbox [lon, lat] bounds to flat ViewportBounds for Supabase RPC. */
+export function toViewportBounds(
+  ne: [number, number],
+  sw: [number, number],
+): ViewportBounds {
+  return {
+    minLat: sw[1],
+    minLng: sw[0],
+    maxLat: ne[1],
+    maxLng: ne[0],
+  };
+}
+
 // ─── Mapbox camera ───
 
 export const ARGENTINA_CAMERA = {

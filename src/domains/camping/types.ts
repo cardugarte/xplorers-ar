@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-export const CampingSourceSchema = z.enum(["sinta", "scraped", "community"]);
+export const CampingSourceSchema = z.enum(["sinta", "scraped", "community", "osm"]);
 export type CampingSource = z.infer<typeof CampingSourceSchema>;
 
 export const CampingTypeSchema = z.enum(["municipal", "nacional", "privado", "libre"]);
