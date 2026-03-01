@@ -28,6 +28,16 @@ supabase/        → SQL migrations
 scripts/scraper/ → Python data scrapers
 ```
 
+## Design System — "Patagonia Salvaje + iOS 26 Liquid Glass"
+
+- **Colors**: andes (green), glaciar (blue), crepúsculo (orange)
+- **Typography**: Barlow Condensed (headings), DM Sans (body), Barlow Semi Condensed (labels), Instrument Serif (display)
+- **Glass effects**: expo-blur BlurView + rgba fallbacks — see `src/shared/theme/glass.ts`
+- **Tokens**: `src/shared/theme/tokens.ts` — all colors, semantic values, glass text colors
+- **GlassView**: `src/shared/components/GlassView.tsx` — reusable glass component
+- **Contrast rule**: light mode = dark text over glass, dark mode = light text over glass (WCAG AA)
+- **NativeWind classes**: `font-heading`, `font-body`, `font-label`, `text-andes-*`, `text-glaciar-*`, `text-crepusculo-*`
+
 ## Conventions
 
 - Routes in `app/` are thin shells — logic lives in `src/domains/`

@@ -2,11 +2,11 @@ import { View, Text } from "react-native";
 
 export default function DiscoverScreen() {
   return (
-    <View className="flex-1 items-center justify-center bg-white dark:bg-neutral-900">
-      <Text className="text-lg font-semibold text-neutral-900 dark:text-white">
+    <View className="flex-1 items-center justify-center bg-[#fafbfc] dark:bg-[#1e2730]">
+      <Text className="font-heading text-2xl uppercase tracking-wide text-andes-800 dark:text-andes-300">
         Explorar Campings
       </Text>
-      <Text className="mt-2 text-sm text-neutral-500">
+      <Text className="mt-3 font-body text-sm text-[#4e6070] dark:text-[#ccd6df]">
         Listado y búsqueda — issue #8 y #9
       </Text>
     </View>
