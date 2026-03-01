@@ -1,3 +1,5 @@
-# Scraper output — large JSON files, not committed
+# Scraper output — cached and generated files, not committed
 *.json
+*.csv
+*.html
 !.gitignore
