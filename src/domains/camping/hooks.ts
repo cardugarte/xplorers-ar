@@ -1,16 +1,18 @@
 import {
   keepPreviousData,
   useInfiniteQuery,
+  useMutation,
   useQuery,
 } from "@tanstack/react-query";
 import { useShallow } from "zustand/react/shallow";
 
 import { supabase } from "@/src/infrastructure/supabase/client";
+import type { Database } from "@/src/infrastructure/supabase/types";
 import { useDebouncedValue } from "@/src/shared/hooks/useDebouncedValue";
 import type { ViewportBounds } from "@/src/domains/map/types";
 
 import { useFilterStore } from "./store";
-import type { Camping } from "./types";
+import type { Camping, ErrorReportType } from "./types";
 
 export type CampingWithDistance = Camping & { distance_km: number | null };
 
@@ -62,6 +64,8 @@ export function useCampingsInBBox(bounds: ViewportBounds | null) {
   });
 }
 
+export type CampingRow = Database["public"]["Tables"]["campings"]["Row"];
+
 export function useCamping(id: string) {
   return useQuery({
     queryKey: ["campings", id],
@@ -73,7 +77,7 @@ export function useCamping(id: string) {
         .single();
 
       if (error) throw error;
-      return data;
+      return data as unknown as CampingRow;
     },
     enabled: !!id,
   });
@@ -148,5 +152,21 @@ export function useCampingsByProvince(province: string) {
       return data;
     },
     enabled: !!province,
+  });
+}
+
+export function useReportError() {
+  return useMutation({
+    mutationFn: async (payload: {
+      camping_id: string;
+      type: ErrorReportType;
+      description: string;
+    }) => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const { error } = await (supabase.from("error_reports") as any).insert(
+        payload,
+      );
+      if (error) throw error;
+    },
   });
 }

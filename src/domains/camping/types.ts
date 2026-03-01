@@ -116,3 +116,13 @@ export const CAMPING_TYPE_LABELS: Record<CampingType, string> = {
   privado: "Privado",
   libre: "Libre",
 };
+
+export const ERROR_REPORT_TYPES = [
+  { value: "wrong_location", label: "Ubicación incorrecta" },
+  { value: "closed", label: "Cerrado permanentemente" },
+  { value: "wrong_info", label: "Información incorrecta" },
+  { value: "duplicate", label: "Duplicado" },
+  { value: "other", label: "Otro" },
+] as const;
+
+export type ErrorReportType = (typeof ERROR_REPORT_TYPES)[number]["value"];
