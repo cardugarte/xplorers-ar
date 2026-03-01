@@ -4,9 +4,16 @@
   "version": "1.0.0",
   "scripts": {
     "start": "expo start",
+    "start:clear": "expo start --clear",
     "android": "expo start --android",
     "ios": "expo start --ios",
-    "web": "expo start --web"
+    "web": "expo start --web",
+    "typecheck": "tsc --noEmit",
+    "db:start": "supabase start",
+    "db:stop": "supabase stop",
+    "db:reset": "supabase db reset",
+    "db:migration:new": "supabase migration new",
+    "db:gen-types": "supabase gen types typescript --local > src/infrastructure/supabase/database.types.ts"
   },
   "dependencies": {
     "@expo-google-fonts/barlow-condensed": "^0.4.1",
