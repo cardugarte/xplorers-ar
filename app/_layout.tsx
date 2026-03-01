@@ -1,4 +1,5 @@
 import "@/global.css";
+import "@/src/infrastructure/mapbox/client";
 import { DarkTheme, DefaultTheme, ThemeProvider } from "@react-navigation/native";
 import {
   BarlowCondensed_600SemiBold,

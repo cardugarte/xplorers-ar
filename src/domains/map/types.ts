@@ -70,3 +70,22 @@ export const POPULAR_ZONES = [
     },
   },
 ] as const;
+
+// ─── Mapbox camera ───
+
+export const ARGENTINA_CAMERA = {
+  center: [-63.6167, -38.4161] as [number, number],
+  zoom: 4,
+  pitch: 0,
+  heading: 0,
+} as const;
+
+/** Convert MapBounds to Mapbox [ne, sw] format with [lon, lat] pairs. */
+export function toMapboxBounds(
+  bounds: MapBounds,
+): { ne: [number, number]; sw: [number, number] } {
+  return {
+    ne: [bounds.ne.longitude, bounds.ne.latitude],
+    sw: [bounds.sw.longitude, bounds.sw.latitude],
+  };
+}

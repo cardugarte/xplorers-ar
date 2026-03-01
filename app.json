@@ -48,7 +48,8 @@
         {
           "locationAlwaysAndWhenInUsePermission": "Xplorers usa tu ubicación para mostrarte campings cercanos y verificar check-ins."
         }
-      ]
+      ],
+      "@rnmapbox/maps"
     ],
     "experiments": {
       "typedRoutes": true
