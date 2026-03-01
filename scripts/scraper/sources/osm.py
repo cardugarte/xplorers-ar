@@ -8,12 +8,12 @@ Tags reference: https://wiki.openstreetmap.org/wiki/Tag:tourism=camp_site
 from __future__ import annotations
 
 import json
-import re
 import sys
-import unicodedata
 from pathlib import Path
 from urllib.request import Request, urlopen
 from urllib.error import URLError
+
+from sources.utils import slugify
 
 OVERPASS_URL = "https://overpass-api.de/api/interpreter"
 
@@ -48,16 +48,6 @@ AMENITY_MAP = {
 YES_VALUES = {"yes", "true", "1"}
 NO_VALUES = {"no", "false", "0", "none"}
 
-
-def slugify(text: str) -> str:
-    """Convert text to a URL-friendly slug."""
-    # Normalize unicode → ASCII
-    text = unicodedata.normalize("NFKD", text)
-    text = text.encode("ascii", "ignore").decode("ascii")
-    text = text.lower().strip()
-    text = re.sub(r"[^a-z0-9\s-]", "", text)
-    text = re.sub(r"[\s-]+", "-", text)
-    return text.strip("-")
 
 
 def _parse_bool(value: str | None) -> bool | None:
