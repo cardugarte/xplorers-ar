@@ -5,6 +5,7 @@ export { CampingDetailHero } from "./CampingDetailHero";
 export { CampingPricesSection } from "./CampingPricesSection";
 export { FilterChips } from "./FilterChips";
 export { FilterModal } from "./FilterModal";
+export { OwnerSettingsScreen } from "./OwnerSettingsScreen";
 export { ReportErrorModal } from "./ReportErrorModal";
 export { SearchInput } from "./SearchInput";
 export { SortPicker } from "./SortPicker";

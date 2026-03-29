@@ -129,6 +129,13 @@ export type Database = {
           }
         >;
       };
+      set_owner_lightning_address: {
+        Args: {
+          camping_id: string;
+          lud16: string;
+        };
+        Returns: void;
+      };
     };
   };
 };
