@@ -35,9 +35,14 @@ export const NOSTR_KINDS = {
   SHORT_TEXT_NOTE: 1,
   // NIP-25
   REACTION: 7,
+<<<<<<< HEAD
   // NIP-58
   BADGE_AWARD: 8,
   // NIP-22
+=======
+  // NIP-58: badge award (regular event — immutable, cannot be revoked)
+  BADGE_AWARD: 8,
+>>>>>>> feat/24-badges
   COMMENT: 1111,
   // NIP-57
   ZAP_REQUEST: 9734,
