@@ -1,4 +1,5 @@
 export { CampingAmenitiesGrid } from "./CampingAmenitiesGrid";
+export { FavoriteButton } from "./FavoriteButton";
 export { CampingCard } from "./CampingCard";
 export { CampingContactSection } from "./CampingContactSection";
 export { CampingDetailHero } from "./CampingDetailHero";
