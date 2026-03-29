@@ -11,9 +11,35 @@
  */
 
 declare module "@nostr-dev-kit/mobile" {
-  export interface NDKTag extends Array<string> {
-    0: string;
-    1: string;
+  /** A tag is simply an array of strings, e.g. ["p", "<hex>"] */
+  export type NDKTag = string[];
+
+  /** Profile metadata from kind:0 events (NIP-01). */
+  export interface NDKUserProfile {
+    name?: string;
+    displayName?: string;
+    about?: string;
+    picture?: string;
+    banner?: string;
+    lud16?: string;
+    nip05?: string;
+    [key: string]: unknown;
+  }
+
+  /** Serialised event data (used by hooks before full NDKEvent hydration). */
+  export interface NDKEventData {
+    id: string;
+    pubkey: string;
+    kind: number;
+    content: string;
+    tags: string[][];
+    created_at: number;
+  }
+
+  export interface NDKUser {
+    pubkey: string;
+    npub: string;
+    fetchProfile(): Promise<NDKUserProfile | null>;
   }
 
   export class NDKEvent {
@@ -27,10 +53,28 @@ declare module "@nostr-dev-kit/mobile" {
     publish(): Promise<void>;
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-empty-interface
+  export interface NDKSigner {}
+
+  export class NDKCacheAdapterSqlite {
+    constructor(dbName: string);
+    initialize(): void;
+  }
+
+  export class NDKSessionExpoSecureStore {
+    constructor();
+  }
+
   export default class NDK {
     constructor(opts?: { explicitRelayUrls?: string[]; cacheAdapter?: unknown; signer?: unknown; clientName?: string });
     connect(timeout?: number): Promise<void>;
+    connected: boolean;
     signer?: unknown;
+    getUser(opts: { npub?: string; pubkey?: string }): NDKUser;
+    createEvent(): NDKEvent;
+    publish(event: NDKEvent | NDKEventData): Promise<void>;
+    fetchEvents(filter: NDKFilter | Record<string, unknown>): Promise<NDKEventData[]>;
+    fetchProfile(pubkey: string): Promise<NDKUserProfile | null>;
   }
 
   export interface NDKFilter {
@@ -40,8 +84,10 @@ declare module "@nostr-dev-kit/mobile" {
     "#p"?: string[];
     "#d"?: string[];
     "#a"?: string[];
+    "#A"?: string[];
     "#e"?: string[];
     "#g"?: string[];
+    "#t"?: string[];
     since?: number;
     until?: number;
     limit?: number;
@@ -58,7 +104,18 @@ declare module "@nostr-dev-kit/mobile" {
     deps?: unknown[],
   ): { events: NDKEvent[]; eose: boolean };
 
-  export function useNDK(): { ndk: NDK | undefined };
+  export function useNDK(): {
+    ndk: NDK | undefined;
+    currentUser: NDKUser | undefined;
+    isReady: boolean;
+  };
+
+  export function useNDKInit(): (ndk: NDK) => void;
+
+  export function useSessionMonitor(opts?: {
+    profile?: boolean;
+    follows?: boolean;
+  }): void;
 
   export class NDKPrivateKeySigner {
     static generate(): NDKPrivateKeySigner;

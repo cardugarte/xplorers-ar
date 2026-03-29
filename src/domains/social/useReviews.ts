@@ -52,7 +52,7 @@ export function useReviews(venueRef: string | null) {
   return useQuery({
     queryKey: ["nostr", "reviews", venueRef],
     queryFn: async (): Promise<Review[]> => {
-      if (!venueRef) return [];
+      if (!venueRef || !ndk) return [];
 
       const events = await ndk.fetchEvents({
         kinds: [NOSTR_KINDS.COMMENT],
@@ -95,6 +95,7 @@ export function usePublishReview() {
       if (!currentUser) {
         throw new Error("Necesitás iniciar sesión para dejar una review");
       }
+      if (!ndk) throw new Error("NDK no está disponible");
 
       const event = ndk.createEvent();
       event.kind = NOSTR_KINDS.COMMENT;

@@ -127,7 +127,7 @@ export default function ProfileScreen() {
             identity={identity}
             isDarkMode={dark}
             onToggleDarkMode={handleToggleDarkMode}
-            onSignOut={signOut}
+            onSignOut={() => signOut.mutate()}
           />
         </View>
       </ScrollView>

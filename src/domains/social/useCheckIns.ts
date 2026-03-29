@@ -129,6 +129,8 @@ export function useCheckIn() {
 
       const venueRef = `${NOSTR_KINDS.CAMPING_VENUE}:${params.venuePubkey}:${params.campingSlug}`;
 
+      if (!ndk) throw new Error("NDK no está disponible");
+
       // 1. Publish check-in note (kind:1)
       const note = ndk.createEvent();
       note.kind = NOSTR_KINDS.SHORT_TEXT_NOTE;
@@ -175,7 +177,7 @@ export function useCheckInHistory(pubkey: string | null) {
   return useQuery({
     queryKey: ["nostr", "checkins", pubkey],
     queryFn: async (): Promise<CheckIn[]> => {
-      if (!pubkey) return [];
+      if (!pubkey || !ndk) return [];
 
       const events = await ndk.fetchEvents({
         kinds: [NOSTR_KINDS.SHORT_TEXT_NOTE],

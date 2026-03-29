@@ -22,7 +22,7 @@ export default function SignInScreen() {
 
     try {
       await signIn.mutateAsync({ email: email.trim(), password });
-      router.replace("/(tabs)");
+      router.replace("/(tabs)" as any);
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : "Error al iniciar sesión.";
       setFormError(msg);
@@ -97,7 +97,7 @@ export default function SignInScreen() {
         {/* Footer */}
         <TouchableOpacity
           className="mt-6 items-center"
-          onPress={() => router.replace("/(auth)/sign-up")}
+          onPress={() => router.replace("/(auth)/sign-up" as any)}
           activeOpacity={0.75}
         >
           <Text className="font-body text-sm text-andes-400">

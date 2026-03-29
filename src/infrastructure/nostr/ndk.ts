@@ -35,14 +35,8 @@ export const NOSTR_KINDS = {
   SHORT_TEXT_NOTE: 1,
   // NIP-25
   REACTION: 7,
-<<<<<<< HEAD
   // NIP-58
   BADGE_AWARD: 8,
-  // NIP-22
-=======
-  // NIP-58: badge award (regular event — immutable, cannot be revoked)
-  BADGE_AWARD: 8,
->>>>>>> feat/24-badges
   COMMENT: 1111,
   // NIP-57
   ZAP_REQUEST: 9734,
@@ -56,13 +50,8 @@ export const NOSTR_KINDS = {
   BADGE_DEFINITION: 30009,
   // NIP-38
   STATUS: 30315,
-<<<<<<< HEAD
   // Route / trail (addressable)
   ROUTE: 30402,
-  // Custom — camping venue with geohash + amenities
-=======
-  ROUTE: 30402,
->>>>>>> feat/39-ugc-routes
   CAMPING_VENUE: 37515,
 } as const;
 

@@ -2,7 +2,8 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { z } from "zod";
 
 import { NOSTR_KINDS } from "@/src/infrastructure/nostr/ndk";
-import { useNDK, type NDKEvent } from "@/src/infrastructure/nostr/useNDK";
+import { useNDK } from "@/src/infrastructure/nostr/useNDK";
+import type { NDKEventData } from "@/src/infrastructure/nostr/useNDK";
 import type { GPXWaypoint } from "./utils/gpx-parser";
 
 // ─── Nostr kind for user routes ───────────────────────────────────────────────
@@ -47,7 +48,7 @@ function slugify(text: string): string {
     .replace(/(^-|-$)/g, "");
 }
 
-function parseRouteEvent(event: NDKEvent): UserRoute | null {
+function parseRouteEvent(event: NDKEventData): UserRoute | null {
   try {
     const tags = event.tags;
     const getTag = (name: string) =>
@@ -124,7 +125,9 @@ export function usePublishRoute() {
         ...input.campingIds.map((id) => ["a", `${NOSTR_KINDS.CAMPING_VENUE}:${currentUser.pubkey}:${id}`]),
       ];
 
-      const event: NDKEvent = {
+      const event: NDKEventData = {
+        id: "",
+        pubkey: currentUser.pubkey,
         kind: ROUTE_KIND,
         content: JSON.stringify(content),
         tags,

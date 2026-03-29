@@ -80,6 +80,8 @@ export function useSocialFeed(geohashPrefix?: string) {
         ...(geohashPrefix ? { "#g": [geohashPrefix] } : {}),
       };
 
+      if (!ndk) return [];
+
       const events = await ndk.fetchEvents(baseFilter);
 
       // Collect unique pubkeys for profile fetching

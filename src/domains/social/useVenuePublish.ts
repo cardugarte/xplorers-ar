@@ -44,6 +44,7 @@ export function useVenuePublish() {
   return useMutation({
     mutationKey: ["nostr", "venue", "publish"],
     mutationFn: async ({ camping, appPubkey }: PublishVenueParams) => {
+      if (!ndk) throw new Error("NDK no está disponible");
       if (!ndk.connected) {
         throw new Error("NDK no está conectado a relays");
       }

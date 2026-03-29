@@ -22,7 +22,7 @@ export default function OnboardingScreen() {
         <View className="mt-16 w-full gap-3">
           <TouchableOpacity
             className="w-full items-center rounded-2xl bg-glaciar-500 py-4"
-            onPress={() => router.push("/(auth)/sign-up")}
+            onPress={() => router.push("/(auth)/sign-up" as any)}
             activeOpacity={0.85}
           >
             <Text className="font-label-semibold text-base text-white">
@@ -32,7 +32,7 @@ export default function OnboardingScreen() {
 
           <TouchableOpacity
             className="w-full items-center rounded-2xl border border-andes-600 py-4"
-            onPress={() => router.replace("/(tabs)")}
+            onPress={() => router.replace("/(tabs)" as any)}
             activeOpacity={0.75}
           >
             <Text className="font-body text-base text-andes-300">
@@ -42,7 +42,7 @@ export default function OnboardingScreen() {
 
           <TouchableOpacity
             className="mt-1 w-full items-center py-2"
-            onPress={() => router.push("/(auth)/sign-in")}
+            onPress={() => router.push("/(auth)/sign-in" as any)}
             activeOpacity={0.75}
           >
             <Text className="font-body text-sm text-andes-400">

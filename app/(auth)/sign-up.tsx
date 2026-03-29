@@ -28,13 +28,13 @@ export default function SignUpScreen() {
     }
 
     try {
-      if (isAnonymous()) {
+      if (isAnonymous) {
         // Upgrade anonymous session → preserves user_id and all existing data
         await upgradeAnonymous.mutateAsync({ email: email.trim(), password });
       } else {
         await signUp.mutateAsync({ email: email.trim(), password });
       }
-      router.replace("/(tabs)");
+      router.replace("/(tabs)" as any);
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : "Error al crear la cuenta.";
       setFormError(msg);
@@ -61,7 +61,7 @@ export default function SignUpScreen() {
           Crear cuenta
         </Text>
         <Text className="mt-2 font-body-light text-base text-andes-400">
-          {isAnonymous()
+          {isAnonymous
             ? "Guardá tus datos y accedé desde cualquier dispositivo"
             : "Unite a la comunidad Xplorers"}
         </Text>
@@ -113,7 +113,7 @@ export default function SignUpScreen() {
         {/* Footer */}
         <TouchableOpacity
           className="mt-6 items-center"
-          onPress={() => router.replace("/(auth)/sign-in")}
+          onPress={() => router.replace("/(auth)/sign-in" as any)}
           activeOpacity={0.75}
         >
           <Text className="font-body text-sm text-andes-400">

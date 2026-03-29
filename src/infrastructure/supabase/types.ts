@@ -124,6 +124,7 @@ export type Database = {
           evidence?: string | null;
         };
         Update: Partial<Database["public"]["Tables"]["owner_claims"]["Insert"]>;
+        Relationships: [];
       };
       curated_routes: {
         Row: {
@@ -150,6 +151,7 @@ export type Database = {
           waypoints?: Record<string, unknown> | null;
         };
         Update: Partial<Database["public"]["Tables"]["curated_routes"]["Insert"]>;
+        Relationships: [];
       };
       error_reports: {
         Row: {
