@@ -1,3 +1,6 @@
+// crypto polyfill — MUST be the first import before any Nostr/crypto code
+import "react-native-get-random-values";
+
 import "@/global.css";
 import "@/src/infrastructure/mapbox/client";
 import { DarkTheme, DefaultTheme, ThemeProvider } from "@react-navigation/native";
@@ -32,6 +35,7 @@ import "react-native-reanimated";
 import { useEnsureSession } from "@/src/domains/identity/hooks";
 import { queryClient } from "@/src/infrastructure/tanstack/queryClient";
 import { queryPersister } from "@/src/infrastructure/tanstack/persister";
+import { NDKProvider } from "@/src/infrastructure/nostr/provider";
 
 export { ErrorBoundary } from "expo-router";
 
@@ -89,21 +93,23 @@ export default function RootLayout() {
         maxAge: 24 * 60 * 60 * 1000, // 24 hours — matches gcTime
       }}
     >
-      <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
-        <AuthInitializer />
-        <Stack>
-          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-          <Stack.Screen
-            name="camping/[id]/index"
-            options={{ headerShown: false }}
-          />
-          <Stack.Screen
-            name="camping/[id]/reserve"
-            options={{ headerShown: false }}
-          />
-          <Stack.Screen name="+not-found" />
-        </Stack>
-      </ThemeProvider>
+      <NDKProvider>
+        <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
+          <AuthInitializer />
+          <Stack>
+            <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+            <Stack.Screen
+              name="camping/[id]/index"
+              options={{ headerShown: false }}
+            />
+            <Stack.Screen
+              name="camping/[id]/reserve"
+              options={{ headerShown: false }}
+            />
+            <Stack.Screen name="+not-found" />
+          </Stack>
+        </ThemeProvider>
+      </NDKProvider>
     </PersistQueryClientProvider>
   );
 }
