@@ -1,6 +1,59 @@
 export type Database = {
   public: {
     Tables: {
+      reservations: {
+        Row: {
+          id: string;
+          camping_id: string;
+          user_id: string;
+          camper_npub: string | null;
+          check_in: string;
+          check_out: string;
+          guests: number;
+          notes: string | null;
+          total_sats: number | null;
+          status:
+            | "pending"
+            | "payment_requested"
+            | "paid"
+            | "confirmed"
+            | "cancelled"
+            | "expired";
+          payment_hash: string | null;
+          preimage: string | null;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          camping_id: string;
+          user_id: string;
+          camper_npub?: string | null;
+          check_in: string;
+          check_out: string;
+          guests?: number;
+          notes?: string | null;
+          total_sats?: number | null;
+          status?: "pending" | "payment_requested" | "paid" | "confirmed" | "cancelled" | "expired";
+          payment_hash?: string | null;
+          preimage?: string | null;
+        };
+        Update: {
+          id?: string;
+          camping_id?: string;
+          user_id?: string;
+          camper_npub?: string | null;
+          check_in?: string;
+          check_out?: string;
+          guests?: number;
+          notes?: string | null;
+          total_sats?: number | null;
+          status?: "pending" | "payment_requested" | "paid" | "confirmed" | "cancelled" | "expired";
+          payment_hash?: string | null;
+          preimage?: string | null;
+        };
+        Relationships: [];
+      };
       campings: {
         Row: {
           id: string;
@@ -51,6 +104,7 @@ export type Database = {
           owner_lightning_address?: string | null;
         };
         Update: Partial<Database["public"]["Tables"]["campings"]["Insert"]>;
+        Relationships: [];
       };
       owner_claims: {
         Row: {
@@ -125,8 +179,10 @@ export type Database = {
         Update: Partial<
           Database["public"]["Tables"]["error_reports"]["Insert"]
         >;
+        Relationships: [];
       };
     };
+    Views: Record<string, never>;
     Functions: {
       get_campings_near: {
         Args: {
