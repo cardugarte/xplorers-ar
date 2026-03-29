@@ -45,5 +45,18 @@
         "appleTeamId": "TODO"
       }
     }
+  },
+  "submit": {
+    "production": {
+      "ios": {
+        "appleId": "TODO_APPLE_ID_EMAIL",
+        "ascAppId": "TODO_APP_STORE_CONNECT_APP_ID",
+        "appleTeamId": "TODO_APPLE_TEAM_ID"
+      },
+      "android": {
+        "serviceAccountKeyPath": "./google-play-key.json",
+        "track": "internal"
+      }
+    }
   }
 }
