@@ -1,25 +1,29 @@
-import type { Session } from "@supabase/supabase-js";
 import { create } from "zustand";
 
-interface AuthStore {
-  session: Session | null;
-  isLoading: boolean;
-  setSession: (session: Session | null) => void;
-  setLoading: (loading: boolean) => void;
-  isAnonymous: () => boolean;
+import type { AuthMethod, AuthState, NostrIdentity } from "./types";
+
+interface AuthActions {
+  setIdentity: (identity: NostrIdentity, method: AuthMethod) => void;
+  signOut: () => void;
+  setAnonymous: () => void;
 }
 
-export const useAuthStore = create<AuthStore>((set, get) => ({
-  session: null,
-  isLoading: true,
-  setSession: (session) => set({ session }),
-  setLoading: (loading) => set({ isLoading: loading }),
-  isAnonymous: () => {
-    const { session } = get();
-    if (!session) return true;
-    // Supabase marks anonymous users with is_anonymous in the JWT
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    return (session.user.user_metadata as any)?.is_anonymous === true ||
-      session.user.is_anonymous === true;
-  },
+const initialState: AuthState = {
+  isAuthenticated: false,
+  identity: null,
+  authMethod: null,
+};
+
+export const useAuthStore = create<AuthState & AuthActions & { isAnonymous: boolean }>((set) => ({
+  ...initialState,
+  isAnonymous: true,
+
+  setIdentity: (identity, authMethod) =>
+    set({ identity, authMethod, isAuthenticated: true, isAnonymous: false }),
+
+  setAnonymous: () =>
+    set({ ...initialState, isAnonymous: true }),
+
+  signOut: () =>
+    set({ ...initialState, isAnonymous: true }),
 }));

@@ -1,146 +1,106 @@
-/**
- * BadgeGrid — displays a user's earned badges in a responsive grid.
- *
- * Shows all BADGE_DEFINITIONS as slots. Earned badges are highlighted,
- * unearned badges are shown as locked (dimmed) placeholders.
- * Uses local-first principle: renders from cache, no loading spinners.
- */
-
-import { Text, View } from "react-native";
+import { Award } from "lucide-react-native";
+import { ScrollView, Text, useColorScheme, View } from "react-native";
 
 import { GlassView } from "@/src/shared/components/GlassView";
-import { ALL_BADGE_DEFINITIONS } from "./definitions";
-import type { BadgeDefinition } from "./definitions";
-import { BadgeDisplay } from "./BadgeDisplay";
-import type { EarnedBadge } from "./useBadges";
+import { glassText } from "@/src/shared/theme/tokens";
+import { BADGES, type Badge } from "@/src/domains/social/types";
 
-// ---------------------------------------------------------------------------
-// Props
-// ---------------------------------------------------------------------------
-
-interface BadgeGridProps {
-  /** Badges the user has earned (from useUserBadges) */
-  earnedBadges: EarnedBadge[];
-  /** Show all badge slots including unearned ones */
-  showLocked?: boolean;
+interface BadgeItemProps {
+  badge: (typeof BADGES)[keyof typeof BADGES];
+  earned?: boolean;
 }
 
-// ---------------------------------------------------------------------------
-// Component
-// ---------------------------------------------------------------------------
-
-export function BadgeGrid({ earnedBadges, showLocked = true }: BadgeGridProps) {
-  // Build a dTag → EarnedBadge lookup for O(1) slot resolution
-  const earnedByDTag = new Map<string, EarnedBadge>();
-  for (const badge of earnedBadges) {
-    earnedByDTag.set(badge.definition.dTag, badge);
-  }
-
-  const slots: BadgeSlot[] = ALL_BADGE_DEFINITIONS.map((def) => {
-    const earned = earnedByDTag.get(def.dTag);
-    return earned ? { kind: "earned", earned, definition: def } : { kind: "locked", definition: def };
-  });
-
-  const visibleSlots = showLocked
-    ? slots
-    : slots.filter((s): s is EarnedSlot => s.kind === "earned");
-
-  if (visibleSlots.length === 0) {
-    return <EmptyState />;
-  }
+function BadgeItem({ badge, earned = false }: BadgeItemProps) {
+  const dark = useColorScheme() === "dark";
+  const colors = dark ? glassText.dark : glassText.light;
 
   return (
-    <View className="gap-3">
-      {/* Earned badges — full card display */}
-      {earnedBadges.length > 0 && (
-        <View className="gap-2">
-          <Text className="font-heading text-sm font-semibold text-andes-700 dark:text-andes-300 px-1">
-            Badges obtenidos ({earnedBadges.length})
-          </Text>
-          {slots
-            .filter((s): s is EarnedSlot => s.kind === "earned")
-            .map((slot) => (
-              <BadgeDisplay key={slot.earned.awardEventId} badge={slot.earned} />
-            ))}
-        </View>
-      )}
+    <GlassView
+      level={earned ? "andes" : "soft"}
+      className="m-1.5 w-24 items-center rounded-glass p-3"
+      style={{ opacity: earned ? 1 : 0.45 }}
+    >
+      <View
+        className="mb-2 h-12 w-12 items-center justify-center rounded-full"
+        style={{
+          backgroundColor: earned
+            ? dark
+              ? "rgba(80,164,114,0.25)"
+              : "rgba(45,134,83,0.15)"
+            : dark
+              ? "rgba(255,255,255,0.08)"
+              : "rgba(30,39,48,0.08)",
+        }}
+      >
+        <Award
+          size={24}
+          color={earned ? colors.brand : colors.secondary}
+        />
+      </View>
+      <Text
+        className="text-center font-label text-xs"
+        style={{ color: earned ? colors.brand : colors.secondary }}
+        numberOfLines={2}
+      >
+        {badge.name}
+      </Text>
+    </GlassView>
+  );
+}
 
-      {/* Locked badges — compact grid */}
-      {showLocked && slots.some((s) => s.kind === "locked") && (
-        <View className="gap-2">
-          <Text className="font-heading text-sm font-semibold text-andes-500 dark:text-andes-500 px-1">
-            Por desbloquear
-          </Text>
-          <View className="flex-row flex-wrap gap-3">
-            {slots
-              .filter((s): s is LockedSlot => s.kind === "locked")
-              .map((slot) => (
-                <LockedBadgeCard key={slot.definition.dTag} definition={slot.definition} />
-              ))}
-          </View>
-        </View>
+interface BadgeGridProps {
+  /** npubs of earned badge d_tags — for now a stub until Nostr integration in Fase 2 */
+  earnedDTags?: string[];
+}
+
+export function BadgeGrid({ earnedDTags = [] }: BadgeGridProps) {
+  const dark = useColorScheme() === "dark";
+  const colors = dark ? glassText.dark : glassText.light;
+
+  const allBadges = Object.values(BADGES);
+  const hasAny = earnedDTags.length > 0;
+
+  return (
+    <View>
+      <View className="mb-3 flex-row items-center gap-2 px-4">
+        <Award size={16} color={colors.brand} />
+        <Text
+          className="font-heading text-sm uppercase tracking-wide"
+          style={{ color: colors.primary }}
+        >
+          Badges
+        </Text>
+        {hasAny && (
+          <GlassView level="andes" className="rounded-full px-2 py-0.5">
+            <Text className="font-label text-xs" style={{ color: colors.brand }}>
+              {earnedDTags.length}/{allBadges.length}
+            </Text>
+          </GlassView>
+        )}
+      </View>
+
+      <ScrollView
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        contentContainerStyle={{ paddingHorizontal: 10 }}
+      >
+        {allBadges.map((badge) => (
+          <BadgeItem
+            key={badge.d_tag}
+            badge={badge}
+            earned={earnedDTags.includes(badge.d_tag)}
+          />
+        ))}
+      </ScrollView>
+
+      {!hasAny && (
+        <Text
+          className="mt-2 px-4 font-body text-xs"
+          style={{ color: dark ? glassText.dark.secondary : glassText.light.secondary }}
+        >
+          Completá check-ins y reviews para desbloquear badges
+        </Text>
       )}
     </View>
   );
 }
-
-// ---------------------------------------------------------------------------
-// Locked badge placeholder
-// ---------------------------------------------------------------------------
-
-interface LockedBadgeCardProps {
-  definition: BadgeDefinition;
-}
-
-function LockedBadgeCard({ definition }: LockedBadgeCardProps) {
-  return (
-    <GlassView
-      level="soft"
-      className="items-center justify-center rounded-glass-sm p-3 gap-1 opacity-40"
-      style={{ width: 80 }}
-    >
-      <Text className="text-3xl grayscale">{definition.emoji}</Text>
-      <Text
-        className="font-label text-xs text-center text-andes-600 dark:text-andes-400"
-        numberOfLines={2}
-      >
-        {definition.name}
-      </Text>
-    </GlassView>
-  );
-}
-
-// ---------------------------------------------------------------------------
-// Empty state
-// ---------------------------------------------------------------------------
-
-function EmptyState() {
-  return (
-    <GlassView level="soft" className="items-center justify-center py-10 rounded-glass gap-3">
-      <Text className="text-4xl">🏕️</Text>
-      <Text className="font-heading text-base font-semibold text-andes-800 dark:text-andes-200">
-        Todavía no tenés badges
-      </Text>
-      <Text className="font-body text-sm text-center text-andes-600 dark:text-andes-400 px-8">
-        Explorá campings, hacé check-ins y dejá reviews para ganar tus primeros badges.
-      </Text>
-    </GlassView>
-  );
-}
-
-// ---------------------------------------------------------------------------
-// Slot types (discriminated union)
-// ---------------------------------------------------------------------------
-
-interface EarnedSlot {
-  kind: "earned";
-  earned: EarnedBadge;
-  definition: BadgeDefinition;
-}
-
-interface LockedSlot {
-  kind: "locked";
-  definition: BadgeDefinition;
-}
-
-type BadgeSlot = EarnedSlot | LockedSlot;
