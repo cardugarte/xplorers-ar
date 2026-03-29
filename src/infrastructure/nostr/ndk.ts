@@ -23,6 +23,8 @@ export const NOSTR_KINDS = {
   METADATA: 0,
   SHORT_TEXT_NOTE: 1,
   REACTION: 7,
+  // NIP-58: badge award (regular event — immutable, cannot be revoked)
+  BADGE_AWARD: 8,
   COMMENT: 1111,
   ZAP_RECEIPT: 9735,
   PROFILE_BADGES: 30008,
