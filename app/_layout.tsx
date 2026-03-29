@@ -29,6 +29,7 @@ import { useEffect } from "react";
 import { useColorScheme } from "react-native";
 import "react-native-reanimated";
 
+import { useEnsureSession } from "@/src/domains/identity/hooks";
 import { queryClient } from "@/src/infrastructure/tanstack/queryClient";
 import { queryPersister } from "@/src/infrastructure/tanstack/persister";
 
@@ -39,6 +40,11 @@ export const unstable_settings = {
 };
 
 SplashScreen.preventAutoHideAsync();
+
+function AuthInitializer() {
+  useEnsureSession();
+  return null;
+}
 
 export default function RootLayout() {
   const colorScheme = useColorScheme();
@@ -84,6 +90,7 @@ export default function RootLayout() {
       }}
     >
       <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
+        <AuthInitializer />
         <Stack>
           <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
           <Stack.Screen

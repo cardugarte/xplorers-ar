@@ -1,4 +1,5 @@
 import { createClient } from "@supabase/supabase-js";
+import { AppState } from "react-native";
 
 import { mmkvStorageAdapter } from "@/src/infrastructure/storage/mmkv";
 
@@ -14,4 +15,12 @@ export const supabase = createClient<Database>(SUPABASE_URL, SUPABASE_ANON_KEY, 
     persistSession: true,
     detectSessionInUrl: false,
   },
+});
+
+AppState.addEventListener("change", (state) => {
+  if (state === "active") {
+    supabase.auth.startAutoRefresh();
+  } else {
+    supabase.auth.stopAutoRefresh();
+  }
 });
