@@ -9,6 +9,8 @@ export async function getCampingDatabase(): Promise<SQLite.SQLiteDatabase> {
 
   db = await SQLite.openDatabaseAsync(DB_NAME);
 
+  await db.execAsync("PRAGMA journal_mode = WAL;");
+
   await db.execAsync(`
     CREATE TABLE IF NOT EXISTS campings (
       id TEXT PRIMARY KEY,
