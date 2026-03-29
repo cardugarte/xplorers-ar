@@ -71,7 +71,7 @@ scripts/scraper/        → Python pipeline: OSM Overpass → georef-ar reverse 
 - **Expo Router v4** — file-based routing, path alias `@/*` → repo root
 - **NativeWind v4 + Tailwind CSS v3** — className for all styling, no StyleSheet
 - **Gluestack UI v3** — component primitives (overlay, toast)
-- **TanStack Query v5** — server state (persister packages installed but not wired yet)
+- **TanStack Query v5** — server state, persisted to MMKV (24h max age)
 - **Zustand 5** — UI-only state
 - **Supabase** — PostgreSQL + PostGIS, anon auth, RPC for geo queries
 - **Zod** — schemas are the source of truth for TypeScript types
@@ -82,11 +82,22 @@ scripts/scraper/        → Python pipeline: OSM Overpass → georef-ar reverse 
 ## Key Patterns
 
 - **Zod-first types**: Domain types derived from Zod schemas via `z.infer<>`. Never duplicate types manually.
-- **TanStack Query hooks**: Live in `src/domains/<domain>/hooks.ts`. Use Supabase client directly, no separate API layer yet.
-- **Geo queries**: Supabase RPC functions (`get_campings_near`, `get_campings_in_bbox`, `search_campings`) use PostGIS. The SQLite offline DB uses flat lat/lon with bounding box queries.
+- **TanStack Query hooks**: Live in `src/domains/<domain>/hooks.ts`. Use Supabase client directly via `supabase.rpc()`. All Supabase calls MUST use `.throwOnError()` — TanStack Query needs rejected promises to trigger error states.
+- **Query persistence**: Root layout wraps app in `PersistQueryClientProvider` with MMKV-backed `createSyncStoragePersister`. Cache survives app restarts (24h max age).
+- **Geo queries**: Supabase RPC functions (`get_campings_near`, `get_campings_in_bbox`, `search_campings`, `search_and_filter_campings`) use PostGIS. The SQLite offline DB uses flat lat/lon with bounding box queries.
+- **Filter state**: `src/domains/camping/store.ts` — Zustand store (`useFilterStore`) for search text, provinces, types, amenities, sortBy, userCoords. Toggle helpers included.
 - **Glass design system**: Use `GlassView` component with `level` prop. Glass text colors are hardcoded (not CSS vars) for WCAG AA contrast. Light mode = dark text, dark mode = light text.
-- **NativeWind custom classes**: `font-heading`, `font-body`, `font-label`, `font-display` + color scales `text-andes-*`, `text-glaciar-*`, `text-crepusculo-*`.
+- **NativeWind custom classes**: `font-heading`, `font-body`, `font-label`, `font-display` + color scales `text-andes-*`, `text-glaciar-*`, `text-crepusculo-*`. Dark mode via `darkMode: "class"`.
+- **Shared hooks**: `useDebouncedValue(value, delay=300)` and `useUserLocation()` in `src/shared/hooks/`.
 - **Scraper pipeline**: Pure Python stdlib. OSM tags are mapped to camping amenities/type. Reverse geocoding via georef-ar-api (Argentina government API). Geohash precision 5.
+
+## Hooks (Enforcement)
+
+Claude Code hooks in `.claude/settings.json` enforce project rules automatically:
+- **Migrations are immutable**: Cannot edit existing files in `supabase/migrations/`. Create new migration files only.
+- **Architecture guard**: New file writes are validated against project structure.
+- **Env protection**: `.env` files cannot be modified by Claude.
+- **Typecheck on stop**: `tsc --noEmit` runs automatically when session ends.
 
 ## Database
 

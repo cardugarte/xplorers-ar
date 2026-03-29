@@ -9,7 +9,7 @@ export default function NotFoundScreen() {
         <Text className="text-xl font-bold text-neutral-900 dark:text-white">
           Esta pantalla no existe.
         </Text>
-        <Link href="/" className="mt-4 py-4">
+        <Link href="/map" className="mt-4 py-4">
           <Text className="text-sm text-primary-600">
             Volver al inicio
           </Text>
