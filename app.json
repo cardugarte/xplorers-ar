@@ -55,6 +55,12 @@
       "@rnmapbox/maps",
       "expo-image"
     ],
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/46bc471c-3824-4cfd-92be-2f173995c1f2"
+    },
     "experiments": {
       "typedRoutes": true
     },
