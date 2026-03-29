@@ -21,6 +21,7 @@ export type Database = {
           type: "municipal" | "nacional" | "privado" | "libre" | null;
           source: "sinta" | "scraped" | "community" | "osm";
           verified: boolean;
+          claimed: boolean;
           owner_npub: string | null;
           owner_lightning_address: string | null;
           created_at: string;
@@ -45,10 +46,56 @@ export type Database = {
           type?: "municipal" | "nacional" | "privado" | "libre" | null;
           source: "sinta" | "scraped" | "community" | "osm";
           verified?: boolean;
+          claimed?: boolean;
           owner_npub?: string | null;
           owner_lightning_address?: string | null;
         };
         Update: Partial<Database["public"]["Tables"]["campings"]["Insert"]>;
+      };
+      owner_claims: {
+        Row: {
+          id: string;
+          camping_id: string;
+          claimer_id: string;
+          status: "pending" | "approved" | "rejected";
+          evidence: string | null;
+          admin_notes: string | null;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          camping_id: string;
+          claimer_id: string;
+          status?: "pending" | "approved" | "rejected";
+          evidence?: string | null;
+        };
+        Update: Partial<Database["public"]["Tables"]["owner_claims"]["Insert"]>;
+      };
+      curated_routes: {
+        Row: {
+          id: string;
+          name: string;
+          slug: string;
+          description: string | null;
+          region: string | null;
+          difficulty: "easy" | "moderate" | "hard" | null;
+          duration_days: number | null;
+          camping_ids: string[];
+          waypoints: Record<string, unknown> | null;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          name: string;
+          slug: string;
+          description?: string | null;
+          region?: string | null;
+          difficulty?: "easy" | "moderate" | "hard" | null;
+          duration_days?: number | null;
+          camping_ids?: string[];
+          waypoints?: Record<string, unknown> | null;
+        };
+        Update: Partial<Database["public"]["Tables"]["curated_routes"]["Insert"]>;
       };
       error_reports: {
         Row: {
@@ -128,6 +175,18 @@ export type Database = {
             distance_km: number | null;
           }
         >;
+      };
+      get_route_with_campings: {
+        Args: { route_id: string };
+        Returns: {
+          route: Database["public"]["Tables"]["curated_routes"]["Row"];
+          campings: Array<
+            Omit<Database["public"]["Tables"]["campings"]["Row"], "location"> & {
+              latitude: number;
+              longitude: number;
+            }
+          >;
+        };
       };
     };
   };
