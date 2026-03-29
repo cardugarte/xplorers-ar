@@ -56,9 +56,13 @@ export const NOSTR_KINDS = {
   BADGE_DEFINITION: 30009,
   // NIP-38
   STATUS: 30315,
+<<<<<<< HEAD
   // Route / trail (addressable)
   ROUTE: 30402,
   // Custom — camping venue with geohash + amenities
+=======
+  ROUTE: 30402,
+>>>>>>> feat/39-ugc-routes
   CAMPING_VENUE: 37515,
 } as const;
 
